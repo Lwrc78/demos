@@ -519,61 +519,142 @@ async function init3D() {
     metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.1,
     iridescence: 1, iridescenceIOR: 1.6, envMapIntensity: 1.6,
   });
-  /* Tondeuse construite à partir de formes simples (aucun fichier 3D à charger) */
-  const dark = new THREE.MeshStandardMaterial({ color: 0x1b1b28, metalness: .7, roughness: .32 });
-  const steel = new THREE.MeshStandardMaterial({ color: 0xe3e7ee, metalness: 1, roughness: .18 });
+  /* Tondeuse modélisée en code (aucun fichier 3D à charger) */
+  metal.side = THREE.DoubleSide;
+  const dark = new THREE.MeshStandardMaterial({ color: 0x15151f, metalness: .75, roughness: .34, side: THREE.DoubleSide });
+  const steel = new THREE.MeshStandardMaterial({ color: 0xe6eaf0, metalness: 1, roughness: .16 });
+  const steelDark = new THREE.MeshStandardMaterial({ color: 0x8d93a0, metalness: 1, roughness: .3 });
   const glow1 = new THREE.MeshBasicMaterial();
   const glow2 = new THREE.MeshBasicMaterial();
-  const FLAT = .72; // le corps est ovale, pas rond
 
   const holder = new THREE.Group(); // inclinaison fixe
-  const clipper = new THREE.Group(); // tourne sur elle-même
-  holder.rotation.set(.18, 0, -.42);
-  holder.scale.setScalar(.8);
-  clipper.scale.x = 1.15;
+  const clipper = new THREE.Group(); // pivote sur elle-même
+  holder.rotation.set(.12, 0, -.38);
+  holder.scale.setScalar(.84);
   holder.add(clipper);
   group.add(holder);
 
-  const add = (geo, mat, x, y, z) => {
+  const add = (geo, mat, x = 0, y = 0, z = 0, parent = clipper) => {
     const m = new THREE.Mesh(geo, mat);
     m.position.set(x, y, z);
-    clipper.add(m);
+    parent.add(m);
     return m;
   };
 
-  // Corps chromé
-  add(new THREE.CapsuleGeometry(.55, 2.2, 16, 48), metal, 0, -.35, 0).scale.z = FLAT;
-  // Poignée mate avec rainures lumineuses
-  add(new THREE.CylinderGeometry(.562, .562, 1.15, 48), dark, 0, -.95, 0).scale.z = FLAT;
-  for (let i = 0; i < 5; i++) {
-    const groove = add(new THREE.TorusGeometry(.566, .011, 8, 96), glow2, 0, -1.4 + i * .225, 0);
-    groove.rotation.x = Math.PI / 2;
-    groove.scale.y = FLAT;
-  }
-  // Col évasé puis tête de coupe
-  add(new THREE.CylinderGeometry(.7, .55, .55, 48), metal, 0, 1.15, 0).scale.z = FLAT;
-  add(new THREE.BoxGeometry(1.42, .3, .96), dark, 0, 1.56, 0);
-  add(new THREE.BoxGeometry(1.46, .09, .66), steel, 0, 1.75, .08);
+  // Profil lissé à partir de quelques sections [y, largeur, profondeur, décalage z]
+  const profile = (secs, rows = 48) => {
+    const size = new THREE.CatmullRomCurve3(secs.map(s => new THREE.Vector3(s[1], s[0], s[2])));
+    const shift = new THREE.CatmullRomCurve3(secs.map(s => new THREE.Vector3(s[3] || 0, s[0], 0)));
+    return Array.from({ length: rows + 1 }, (_, i) => {
+      const p = size.getPoint(i / rows);
+      return { y: p.y, w: p.x, d: p.z, z: shift.getPoint(i / rows).x };
+    });
+  };
+  // Contour d'une section : un rectangle très arrondi, comme une vraie coque de tondeuse
+  const outline = (s, seg, grow = 1) => {
+    const pts = [];
+    for (let i = 0; i < seg; i++) {
+      const a = i / seg * Math.PI * 2, c = Math.cos(a), n = Math.sin(a);
+      pts.push(new THREE.Vector3(
+        Math.sign(c) * Math.abs(c) ** .62 * s.w / 2 * grow, s.y,
+        Math.sign(n) * Math.abs(n) ** .62 * s.d / 2 * grow + s.z));
+    }
+    return pts;
+  };
+  const loft = (rows, seg = 72) => {
+    const v = [], idx = [];
+    rows.forEach(r => outline(r, seg).forEach(p => v.push(p.x, p.y, p.z)));
+    for (let r = 0; r < rows.length - 1; r++) for (let i = 0; i < seg; i++) {
+      const a = r * seg + i, b = r * seg + (i + 1) % seg, c = a + seg, d = b + seg;
+      idx.push(a, c, b, b, c, d);
+    }
+    // Bouchons aux deux extrémités
+    [0, rows.length - 1].forEach(r => {
+      const center = v.length / 3;
+      v.push(0, rows[r].y, rows[r].z);
+      for (let i = 0; i < seg; i++) idx.push(center, r * seg + i, r * seg + (i + 1) % seg);
+    });
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  };
+  const at = (rows, y) => {
+    let i = rows.findIndex(r => r.y >= y);
+    if (i < 1) i = i === 0 ? 1 : rows.length - 1;
+    const a = rows[i - 1], b = rows[i], t = Math.min(1, Math.max(0, (y - a.y) / (b.y - a.y)));
+    return { y, w: a.w + (b.w - a.w) * t, d: a.d + (b.d - a.d) * t, z: a.z + (b.z - a.z) * t };
+  };
+  // Filet lumineux qui épouse la coque à une hauteur donnée
+  const band = (rows, y, radius, mat) => add(new THREE.TubeGeometry(
+    new THREE.CatmullRomCurve3(outline(at(rows, y), 96, 1.004), true), 192, radius, 6, true), mat);
 
-  // Deux rangées de dents : une fixe, une mobile qui vibre
-  const movingBlade = new THREE.Group();
-  clipper.add(movingBlade);
-  const toothA = new THREE.BoxGeometry(.03, .24, .3);
-  const toothB = new THREE.BoxGeometry(.026, .19, .28);
-  for (let i = 0; i < 26; i++) {
-    const x = -.69 + i * (1.38 / 25);
-    add(toothA, steel, x, 1.9, .24);
-    const t = new THREE.Mesh(toothB, steel);
-    t.position.set(x + .027, 1.88, -.08);
-    movingBlade.add(t);
-  }
-  add(new THREE.BoxGeometry(1.46, .07, .3), steel, 0, 1.78, -.08);
+  // Coque chromée, plus large vers la tête
+  const body = profile([[-1.98, .8, .64], [-1.4, .9, .73], [-.4, 1, .82], [.6, 1.1, .88], [1.2, 1.17, .86], [1.48, 1.2, .82]]);
+  add(loft(body), metal);
+  // Culot et tête de coupe en finition sombre
+  add(loft(profile([[-2.3, .42, .34], [-2.2, .68, .54], [-2.02, .8, .64], [-1.96, .805, .645]], 16)), dark);
+  const head = profile([[1.46, 1.21, .83, 0], [1.75, 1.25, .7, -.05], [2, 1.25, .5, -.12], [2.07, 1.12, .36, -.13]], 20);
+  add(loft(head), dark);
+  band(body, 1.44, .014, glow1);
+  for (let i = 0; i < 5; i++) band(body, -1.75 + i * .15, .008, glow2);
 
-  // Bouton marche/arrêt et témoins de charge sur la face avant
-  const frontZ = .55 * FLAT + .005;
-  add(new THREE.CapsuleGeometry(.06, .24, 8, 16), glow1, 0, .35, frontZ);
-  add(new THREE.TorusGeometry(.24, .014, 8, 64), glow1, 0, .35, frontZ - .03).scale.y = 1.25;
-  for (let i = 0; i < 3; i++) add(new THREE.SphereGeometry(.028, 12, 12), glow2, -.1 + i * .1, -.18, frontZ);
+  // Lames : une plaque crantée fixe devant, une lame mobile derrière qui vibre
+  const comb = (width, base, tooth, count) => {
+    const s = new THREE.Shape(), x0 = -width / 2, pitch = width / count;
+    s.moveTo(x0 + .06, 0);
+    s.quadraticCurveTo(x0, 0, x0, .06);
+    s.lineTo(x0, base);
+    for (let i = 0; i < count; i++) {
+      const x = x0 + i * pitch;
+      s.lineTo(x + pitch * .16, base);
+      s.lineTo(x + pitch * .36, base + tooth);
+      s.lineTo(x + pitch * .64, base + tooth);
+      s.lineTo(x + pitch * .84, base);
+    }
+    s.lineTo(-x0, base);
+    s.lineTo(-x0, .06);
+    s.quadraticCurveTo(-x0, 0, -x0 - .06, 0);
+    return new THREE.ExtrudeGeometry(s, { depth: .045, bevelEnabled: true, bevelSize: .006, bevelThickness: .006, bevelSegments: 1 });
+  };
+  const blades = new THREE.Group();
+  blades.position.set(0, 1.5, .35);
+  blades.rotation.x = -.3;
+  clipper.add(blades);
+  add(comb(1.36, .6, .2, 30), steel, 0, 0, 0, blades);
+  const movingBlade = add(comb(1.28, .58, .17, 40), steelDark, 0, 0, -.075, blades);
+  [-.36, .36].forEach(x => {
+    add(new THREE.CylinderGeometry(.055, .055, .03, 24), steelDark, x, .3, .06, blades).rotation.x = Math.PI / 2;
+    add(new THREE.BoxGeometry(.075, .012, .01), dark, x, .3, .078, blades).rotation.z = x > 0 ? .5 : -.4;
+  });
+
+  // Levier de réglage de la hauteur de coupe, sur le côté
+  const lever = new THREE.Group();
+  lever.position.set(at(body, 1.1).w / 2 + .03, 1.1, .05);
+  lever.rotation.z = -.35;
+  clipper.add(lever);
+  add(new THREE.BoxGeometry(.05, .55, .13), steelDark, 0, .2, 0, lever);
+  add(new THREE.CapsuleGeometry(.07, .12, 8, 16), dark, .01, .5, 0, lever);
+
+  // Face avant : interrupteur, témoins de charge et gravure
+  const front = y => at(body, y).d / 2;
+  add(new THREE.CapsuleGeometry(.11, .3, 8, 24), dark, 0, .5, front(.5) - .01).scale.z = .28;
+  add(new THREE.CapsuleGeometry(.045, .12, 8, 16), glow1, 0, .58, front(.58) + .012).scale.z = .4;
+  for (let i = 0; i < 3; i++) add(new THREE.SphereGeometry(.024, 12, 12), glow2, -.09 + i * .09, .08, front(.08));
+
+  await document.fonts.load('600 44px "Space Grotesk"').catch(() => {});
+  const label = document.createElement('canvas');
+  label.width = 640; label.height = 96;
+  const ctx = label.getContext('2d');
+  ctx.font = '600 44px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '12px';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.fillText('MAISON GARONNE', 326, 50);
+  const engraving = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(label), transparent: true, opacity: .8, depthWrite: false });
+  add(new THREE.PlaneGeometry(.7, .105), engraving, 0, -.5, front(-.5) + .006);
 
   const N = 700, pos = new Float32Array(N * 3);
   for (let i = 0; i < N; i++) {
@@ -629,7 +710,7 @@ async function init3D() {
     if (!visible) return;
     const t = clock.getElapsedTime();
     if (!reduceMotion) {
-      clipper.rotation.y = t * .45;
+      clipper.rotation.y = .3 + Math.sin(t * .5) * .8;
       movingBlade.position.x = Math.sin(t * 70) * .012;
       dust.rotation.y = t * .02;
     }
