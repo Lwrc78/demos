@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="fr" data-palette="aurora">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maison Garonne — Coiffeur & Barbier à Lormont | Réservation en ligne</title>
+<meta name="description" content="Coiffeur et barbier à Lormont, à 10 minutes de Bordeaux. Coupe homme, femme, enfant, barbe, couleur. Cartes cadeaux de Noël et créneaux des fêtes ouverts.">
+<meta property="og:title" content="Maison Garonne — Coiffeur & Barbier à Lormont">
+<meta property="og:description" content="Coupe, barbe, couleur. Créneaux des fêtes ouverts et cartes cadeaux disponibles.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta name="theme-color" content="#07070d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Données structurées : c'est ce que Google lit pour afficher le salon dans les recherches locales -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  "name": "Maison Garonne",
+  "description": "Coiffeur et barbier à Lormont, près de Bordeaux.",
+  "telephone": "+33500000000",
+  "priceRange": "€€",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "12 rue de l'Exemple",
+    "postalCode": "33310",
+    "addressLocality": "Lormont",
+    "addressCountry": "FR"
+  },
+  "areaServed": ["Lormont", "Cenon", "Bassens", "Bordeaux"],
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:30", "closes": "19:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "18:00" }
+  ]
+}
+</script>
+
+<style>
+  /* Couleurs déclarées comme propriétés animables : le changement de palette se fait en fondu */
+  @property --bg { syntax: "<color>"; inherits: true; initial-value: #07070d; }
+  @property --a1 { syntax: "<color>"; inherits: true; initial-value: #8b5cf6; }
+  @property --a2 { syntax: "<color>"; inherits: true; initial-value: #22d3ee; }
+
+  :root {
+    --bg: #07070d; --a1: #8b5cf6; --a2: #22d3ee;
+    --text: #f4f3fa;
+    --muted: #a09fb3;
+    --glass: rgba(255,255,255,.045);
+    --stroke: rgba(255,255,255,.11);
+    --radius: 22px;
+    transition: --bg .8s ease, --a1 .8s ease, --a2 .8s ease;
+  }
+  [data-palette="or"]       { --bg: #0b0906; --a1: #f5c26b; --a2: #ff7a3d; }
+  [data-palette="emeraude"] { --bg: #050b0a; --a1: #34f5c5; --a2: #3b82f6; }
+  [data-palette="rubis"]    { --bg: #0c0608; --a1: #ff3d81; --a2: #ffa043; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    overflow-x: hidden;
+    padding-bottom: 76px; /* place pour la barre d'appel mobile */
+  }
+  h1, h2, h3 { font-family: "Space Grotesk", system-ui, sans-serif; line-height: 1.08; margin: 0; letter-spacing: -.02em; }
+  a { color: inherit; }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+
+  /* Halos de couleur en fond de page */
+  .glow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .glow-bg i { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(110px); opacity: .2; }
+  .glow-bg i:nth-child(1) { background: var(--a1); top: -25vmax; right: -20vmax; animation: drift 22s ease-in-out infinite alternate; }
+  .glow-bg i:nth-child(2) { background: var(--a2); bottom: -30vmax; left: -25vmax; animation: drift 28s ease-in-out infinite alternate-reverse; }
+  @keyframes drift { to { transform: translate(8vmax, 6vmax) scale(1.15); } }
+
+  .demo-bar { background: linear-gradient(90deg, var(--a1), var(--a2)); color: #0a0a12; text-align: center; font-size: 12.5px; font-weight: 600; padding: 5px 12px; }
+
+  header { position: sticky; top: 0; z-index: 30; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); background: color-mix(in srgb, var(--bg) 70%, transparent); border-bottom: 1px solid var(--stroke); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 14px; height: 64px; }
+  .logo { font-family: "Space Grotesk", sans-serif; font-size: 19px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .logo span { background: linear-gradient(90deg, var(--a1), var(--a2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  nav { display: none; gap: 28px; font-size: 14.5px; }
+  nav a { text-decoration: none; color: var(--muted); transition: color .2s; }
+  nav a:hover { color: var(--text); }
+
+  /* Sélecteur de palette */
+  .palettes { display: flex; gap: 8px; align-items: center; }
+  .palettes button { width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; padding: 0; cursor: pointer; background: linear-gradient(135deg, var(--c1), var(--c2)); outline: 1px solid var(--stroke); transition: transform .2s, border-color .2s; }
+  .palettes button:hover { transform: scale(1.2); }
+  .palettes button[aria-pressed="true"] { border-color: var(--text); transform: scale(1.15); }
+
+  /* Boutons : lueur qui suit le curseur, effet aimanté, onde au clic */
+  .btn {
+    --mx: 50%; --my: 50%;
+    position: relative; overflow: hidden; isolation: isolate;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 26px; border-radius: 999px; border: 0;
+    font: 600 15px Inter, sans-serif; text-decoration: none; cursor: pointer;
+    color: #0a0a12;
+    background: linear-gradient(110deg, var(--a1), var(--a2));
+    box-shadow: 0 10px 34px -10px var(--a1), inset 0 1px 0 rgba(255,255,255,.4);
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
+    will-change: transform;
+  }
+  .btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(120px circle at var(--mx) var(--my), rgba(255,255,255,.65), transparent 60%); opacity: 0; transition: opacity .25s; }
+  .btn:hover::before { opacity: 1; }
+  .btn:hover { box-shadow: 0 16px 44px -8px var(--a1), inset 0 1px 0 rgba(255,255,255,.5); }
+  .btn:active { transform: scale(.96) !important; }
+  .btn.ghost { color: var(--text); background: var(--glass); box-shadow: inset 0 0 0 1px var(--stroke); backdrop-filter: blur(10px); }
+  .btn.ghost::before { background: radial-gradient(120px circle at var(--mx) var(--my), color-mix(in srgb, var(--a1) 55%, transparent), transparent 60%); }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--a1), 0 10px 34px -14px var(--a1); }
+  .btn.small { padding: 10px 18px; font-size: 14px; }
+  .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,.55); transform: scale(0); animation: ripple .6s ease-out forwards; pointer-events: none; }
+  @keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+  /* Hero avec la scène 3D */
+  .hero { position: relative; min-height: min(92vh, 860px); display: flex; align-items: flex-end; padding: 0 0 44px; }
+  #scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hero::after { content: ""; position: absolute; inset: auto 0 0 0; height: 55%; background: linear-gradient(to top, var(--bg) 25%, transparent); pointer-events: none; }
+  .hero .wrap { position: relative; z-index: 2; width: 100%; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--a2); }
+  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--a2); box-shadow: 0 0 12px var(--a2); }
+  .hero h1 { font-size: clamp(40px, 9vw, 86px); margin: 16px 0 18px; max-width: 12ch; }
+  .grad { background: linear-gradient(100deg, var(--a1), var(--a2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { max-width: 44ch; color: var(--muted); margin: 0 0 28px; font-size: 17px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 12px 34px; margin-top: 38px; }
+  .stats b { display: block; font: 700 26px "Space Grotesk", sans-serif; }
+  .stats span { font-size: 13px; color: var(--muted); }
+
+  /* Repli si la 3D ne peut pas se charger */
+  .no-webgl #scene { display: none; }
+  .no-webgl .hero::before { content: ""; position: absolute; top: 8%; right: 6%; width: min(60vw, 420px); aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 0deg, var(--a1), var(--a2), var(--a1)); filter: blur(34px); opacity: .6; animation: spin 14s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  section { padding: 72px 0; }
+  .section-head { margin-bottom: 34px; }
+  .section-head h2 { font-size: clamp(30px, 5.5vw, 50px); margin-top: 14px; max-width: 16ch; }
+
+  /* Verre dépoli + bordure dégradée */
+  .glass { position: relative; background: var(--glass); border-radius: var(--radius); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .glass::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(140deg, color-mix(in srgb, var(--a1) 70%, transparent), var(--stroke) 35%, var(--stroke) 65%, color-mix(in srgb, var(--a2) 70%, transparent)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+
+  .season-card { padding: 30px 24px; display: grid; gap: 26px; overflow: hidden; }
+  .season-card h2 { font-size: clamp(28px, 5vw, 42px); margin-top: 14px; }
+  .season-card p { color: var(--muted); margin: 12px 0 0; }
+  .season-list { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 12px; }
+  .season-list li { display: flex; gap: 12px; align-items: baseline; font-size: 15.5px; }
+  .season-list li::before { content: "✦"; color: var(--a1); }
+
+  /* Cartes inclinables en 3D */
+  .tilt-grid { display: grid; gap: 18px; perspective: 1200px; }
+  .tilt { --rx: 0deg; --ry: 0deg; --gx: 50%; --gy: 50%; padding: 26px; transform: rotateX(var(--rx)) rotateY(var(--ry)); transform-style: preserve-3d; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+  .tilt.moving { transition: transform .05s linear; }
+  .tilt::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(340px circle at var(--gx) var(--gy), color-mix(in srgb, var(--a1) 26%, transparent), transparent 60%); opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .tilt:hover::after { opacity: 1; }
+  .tilt > * { transform: translateZ(28px); }
+  .tilt h3 { font-size: 24px; margin-bottom: 14px; }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a2); margin-bottom: 10px; }
+  .price-row { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid var(--stroke); font-size: 15px; color: var(--muted); }
+  .price-row b { color: var(--text); white-space: nowrap; font-weight: 600; }
+
+  .steps { display: grid; gap: 18px; counter-reset: step; }
+  .step { padding: 26px; counter-increment: step; }
+  .step::after { content: "0" counter(step); position: absolute; top: 18px; right: 22px; font: 700 44px "Space Grotesk", sans-serif; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--a1) 60%, transparent); }
+  .step h3 { font-size: 21px; margin-bottom: 8px; padding-right: 70px; }
+  .step p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .review-grid { display: grid; gap: 18px; }
+  .review { padding: 24px; }
+  .stars { color: var(--a1); letter-spacing: 3px; text-shadow: 0 0 14px var(--a1); }
+  .review p { margin: 10px 0 14px; }
+  .review small, .note { color: var(--muted); font-size: 13px; }
+  .note { margin-top: 16px; }
+
+  .info-grid { display: grid; gap: 18px; }
+  .info { padding: 26px; }
+  .info h3 { font-size: 22px; margin-bottom: 14px; }
+  .hours { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .hours td { padding: 9px 0; border-top: 1px solid var(--stroke); color: var(--muted); }
+  .hours tr:first-child td { border-top: 0; }
+  .hours td:last-child { text-align: right; color: var(--text); font-weight: 500; }
+  .info address { font-style: normal; margin-bottom: 20px; color: var(--muted); }
+
+  footer { border-top: 1px solid var(--stroke); padding: 28px 0; font-size: 13.5px; color: var(--muted); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+  .call-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-top: 1px solid var(--stroke); }
+
+  /* Apparition au défilement */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); transition-delay: var(--d, 0s); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (min-width: 820px) {
+    body { padding-bottom: 0; }
+    nav { display: flex; }
+    .call-bar { display: none; }
+    .hero { align-items: center; padding: 60px 0; }
+    .hero::after { height: 22%; }
+    section { padding: 110px 0; }
+    .season-card { grid-template-columns: 1.15fr 1fr; align-items: center; padding: 52px; }
+    .tilt-grid, .steps, .review-grid { grid-template-columns: repeat(3, 1fr); }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .glow-bg i, .no-webgl .hero::before { animation: none; }
+    .tilt { transform: none !important; }
+  }
+</style>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<div class="glow-bg" aria-hidden="true"><i></i><i></i></div>
+
+<div class="demo-bar">Site de démonstration — nom, adresse, téléphone, chiffres et avis sont des exemples</div>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#">Maison <span>Garonne</span></a>
+    <nav>
+      <a href="#fetes">Fêtes</a>
+      <a href="#tarifs">Prestations</a>
+      <a href="#experience">L'expérience</a>
+      <a href="#infos">Accès</a>
+    </nav>
+    <div class="palettes" role="group" aria-label="Palette de couleurs">
+      <button data-p="aurora" style="--c1:#8b5cf6;--c2:#22d3ee" aria-label="Palette Aurore" aria-pressed="true"></button>
+      <button data-p="or" style="--c1:#f5c26b;--c2:#ff7a3d" aria-label="Palette Or" aria-pressed="false"></button>
+      <button data-p="emeraude" style="--c1:#34f5c5;--c2:#3b82f6" aria-label="Palette Émeraude" aria-pressed="false"></button>
+      <button data-p="rubis" style="--c1:#ff3d81;--c2:#ffa043" aria-label="Palette Rubis" aria-pressed="false"></button>
+    </div>
+    <a class="btn small magnetic" href="tel:+33500000000">Réserver</a>
+  </div>
+</header>
+
+<main>
+  <div class="hero" id="hero">
+    <canvas id="scene" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="eyebrow reveal">Coiffeur & barbier · Lormont</div>
+      <h1 class="reveal" style="--d:.08s">Votre style, <span class="grad">en mieux.</span></h1>
+      <p class="reveal" style="--d:.16s">Un salon pensé comme un studio : diagnostic, coupe sur mesure, finition soignée. À 10 minutes de Bordeaux.</p>
+      <div class="actions reveal" style="--d:.24s">
+        <a class="btn magnetic" href="tel:+33500000000">Réserver un créneau</a>
+        <a class="btn ghost magnetic" href="#tarifs">Voir les prestations</a>
+      </div>
+      <div class="stats reveal" style="--d:.32s">
+        <div><b>4,9/5</b><span>avis Google</span></div>
+        <div><b>12 ans</b><span>d'expérience</span></div>
+        <div><b>3 min</b><span>du tram A</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="fetes">
+    <div class="wrap">
+      <div class="season-card glass reveal">
+        <div>
+          <div class="eyebrow">Fêtes de fin d'année</div>
+          <h2>Décembre est <span class="grad">ouvert.</span></h2>
+          <p>Les deux semaines avant Noël partent vite. Réservez dès maintenant, ou offrez une carte cadeau à glisser sous le sapin.</p>
+        </div>
+        <div>
+          <ul class="season-list">
+            <li>Cartes cadeaux de 20 € à 100 €, valables 1 an</li>
+            <li>Ouverture exceptionnelle les lundis 14 et 21 décembre</li>
+            <li>Forfait fêtes : coupe + barbe + soin à 39 €</li>
+          </ul>
+          <a class="btn magnetic" href="tel:+33500000000">Réserver pour les fêtes</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tarifs">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Prestations</div>
+        <h2>Des tarifs clairs, <span class="grad">affichés.</span></h2>
+      </div>
+      <div class="tilt-grid">
+        <div class="tilt glass reveal">
+          <span class="tag">Signature</span>
+          <h3>Homme</h3>
+          <div class="price-row"><span>Coupe</span><b>19 €</b></div>
+          <div class="price-row"><span>Coupe + barbe</span><b>29 €</b></div>
+          <div class="price-row"><span>Taille de barbe</span><b>12 €</b></div>
+          <div class="price-row"><span>Étudiant (coupe)</span><b>15 €</b></div>
+        </div>
+        <div class="tilt glass reveal" style="--d:.1s">
+          <span class="tag">Couleur & soin</span>
+          <h3>Femme</h3>
+          <div class="price-row"><span>Shampoing, coupe, brushing</span><b>dès 35 €</b></div>
+          <div class="price-row"><span>Couleur</span><b>dès 45 €</b></div>
+          <div class="price-row"><span>Balayage</span><b>dès 65 €</b></div>
+          <div class="price-row"><span>Coiffure de soirée</span><b>40 €</b></div>
+        </div>
+        <div class="tilt glass reveal" style="--d:.2s">
+          <span class="tag">Tout en douceur</span>
+          <h3>Enfant</h3>
+          <div class="price-row"><span>Moins de 6 ans</span><b>10 €</b></div>
+          <div class="price-row"><span>6 à 12 ans</span><b>13 €</b></div>
+          <div class="price-row"><span>Ado (13 à 17 ans)</span><b>16 €</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">L'expérience</div>
+        <h2>Plus qu'une coupe, <span class="grad">un moment.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step glass reveal">
+          <h3>Diagnostic</h3>
+          <p>On regarde votre visage, votre cheveu, vos habitudes. Cinq minutes qui changent le résultat.</p>
+        </div>
+        <div class="step glass reveal" style="--d:.1s">
+          <h3>Coupe sur mesure</h3>
+          <p>Ciseaux, tondeuse ou rasoir : la technique s'adapte à vous, pas l'inverse.</p>
+        </div>
+        <div class="step glass reveal" style="--d:.2s">
+          <h3>Finition</h3>
+          <p>Soin, coiffage et conseils pour refaire la même chose chez vous le lendemain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="avis">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Avis clients</div>
+        <h2>Ce qu'on dit <span class="grad">du salon.</span></h2>
+      </div>
+      <div class="review-grid">
+        <div class="review glass reveal">
+          <div class="stars">★★★★★</div>
+          <p>« Reçu à l'heure, coupe nickel, et on m'a vraiment écouté. Je ne vais plus ailleurs. »</p>
+          <small>Exemple d'avis · client</small>
+        </div>
+        <div class="review glass reveal" style="--d:.1s">
+          <div class="stars">★★★★★</div>
+          <p>« Mon fils de 4 ans n'a pas pleuré une seule fois. Rien que pour ça, merci. »</p>
+          <small>Exemple d'avis · cliente</small>
+        </div>
+        <div class="review glass reveal" style="--d:.2s">
+          <div class="stars">★★★★★</div>
+          <p>« Balayage réussi du premier coup et prix annoncé avant de commencer. »</p>
+          <small>Exemple d'avis · cliente</small>
+        </div>
+      </div>
+      <p class="note">Sur un vrai site, cette section affiche les vrais avis Google du commerce.</p>
+    </div>
+  </section>
+
+  <section id="infos">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Infos pratiques</div>
+        <h2>Horaires <span class="grad">& accès.</span></h2>
+      </div>
+      <div class="info-grid">
+        <div class="info glass reveal">
+          <h3>Horaires</h3>
+          <table class="hours">
+            <tr><td>Lundi</td><td>Fermé</td></tr>
+            <tr><td>Mardi – vendredi</td><td>9h30 – 19h00</td></tr>
+            <tr><td>Samedi</td><td>9h00 – 18h00</td></tr>
+            <tr><td>Dimanche</td><td>Fermé</td></tr>
+          </table>
+        </div>
+        <div class="info glass reveal" style="--d:.1s">
+          <h3>Nous trouver</h3>
+          <address>
+            12 rue de l'Exemple<br>
+            33310 Lormont<br>
+            05 00 00 00 00
+          </address>
+          <div class="actions">
+            <a class="btn magnetic" href="tel:+33500000000">Appeler</a>
+            <a class="btn ghost magnetic" href="https://www.google.com/maps/search/?api=1&query=Lormont+33310" target="_blank" rel="noopener">Itinéraire</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Maison Garonne · Coiffeur & barbier à Lormont</span>
+    <span>Mentions légales</span>
+  </div>
+</footer>
+
+<div class="call-bar">
+  <a class="btn" href="tel:+33500000000">Appeler</a>
+  <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=Lormont+33310" target="_blank" rel="noopener">Itinéraire</a>
+</div>
+
+<script type="module">
+const root = document.documentElement;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(pointer: fine)').matches;
+
+const palettes = {
+  aurora:   ['#8b5cf6', '#22d3ee'],
+  or:       ['#f5c26b', '#ff7a3d'],
+  emeraude: ['#34f5c5', '#3b82f6'],
+  rubis:    ['#ff3d81', '#ffa043'],
+};
+let onPalette = () => {};
+
+/* ---------- Palettes ---------- */
+const paletteButtons = document.querySelectorAll('.palettes button');
+function setPalette(name) {
+  root.dataset.palette = name;
+  paletteButtons.forEach(b => b.setAttribute('aria-pressed', b.dataset.p === name));
+  onPalette(palettes[name]);
+  try { localStorage.setItem('palette', name); } catch {}
+}
+paletteButtons.forEach(b => b.addEventListener('click', () => setPalette(b.dataset.p)));
+let saved = null;
+try { saved = localStorage.getItem('palette'); } catch {}
+if (saved && palettes[saved]) setPalette(saved);
+
+/* ---------- Boutons ---------- */
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('pointermove', e => {
+    const r = btn.getBoundingClientRect();
+    btn.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    btn.style.setProperty('--my', `${e.clientY - r.top}px`);
+    if (finePointer && !reduceMotion && btn.classList.contains('magnetic')) {
+      const dx = e.clientX - (r.left + r.width / 2);
+      const dy = e.clientY - (r.top + r.height / 2);
+      btn.style.transform = `translate(${dx * .22}px, ${dy * .3}px)`;
+    }
+  });
+  btn.addEventListener('pointerleave', () => { btn.style.transform = ''; });
+  btn.addEventListener('pointerdown', e => {
+    const r = btn.getBoundingClientRect();
+    const size = Math.max(r.width, r.height) * 2;
+    const s = document.createElement('span');
+    s.className = 'ripple';
+    s.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
+    btn.appendChild(s);
+    s.addEventListener('animationend', () => s.remove());
+  });
+});
+
+/* ---------- Cartes inclinables ---------- */
+if (finePointer && !reduceMotion) {
+  document.querySelectorAll('.tilt').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      card.classList.add('moving');
+      card.style.setProperty('--ry', `${(x - .5) * 14}deg`);
+      card.style.setProperty('--rx', `${(.5 - y) * 12}deg`);
+      card.style.setProperty('--gx', `${x * 100}%`);
+      card.style.setProperty('--gy', `${y * 100}%`);
+    });
+    card.addEventListener('pointerleave', () => {
+      card.classList.remove('moving');
+      card.style.setProperty('--rx', '0deg');
+      card.style.setProperty('--ry', '0deg');
+    });
+  });
+}
+
+/* ---------- Apparition au défilement ---------- */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- Scène 3D ---------- */
+async function init3D() {
+  const THREE = await import('three');
+  const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+
+  const canvas = document.getElementById('scene');
+  const hero = document.getElementById('hero');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+  const scene = new THREE.Scene();
+  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+  camera.position.z = 7.5;
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const metal = new THREE.MeshPhysicalMaterial({
+    metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.1,
+    iridescence: 1, iridescenceIOR: 1.6, envMapIntensity: 1.6,
+  });
+  /* Tondeuse construite à partir de formes simples (aucun fichier 3D à charger) */
+  const dark = new THREE.MeshStandardMaterial({ color: 0x1b1b28, metalness: .7, roughness: .32 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0xe3e7ee, metalness: 1, roughness: .18 });
+  const glow1 = new THREE.MeshBasicMaterial();
+  const glow2 = new THREE.MeshBasicMaterial();
+  const FLAT = .72; // le corps est ovale, pas rond
+
+  const holder = new THREE.Group(); // inclinaison fixe
+  const clipper = new THREE.Group(); // tourne sur elle-même
+  holder.rotation.set(.18, 0, -.42);
+  holder.scale.setScalar(.8);
+  clipper.scale.x = 1.15;
+  holder.add(clipper);
+  group.add(holder);
+
+  const add = (geo, mat, x, y, z) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    clipper.add(m);
+    return m;
+  };
+
+  // Corps chromé
+  add(new THREE.CapsuleGeometry(.55, 2.2, 16, 48), metal, 0, -.35, 0).scale.z = FLAT;
+  // Poignée mate avec rainures lumineuses
+  add(new THREE.CylinderGeometry(.562, .562, 1.15, 48), dark, 0, -.95, 0).scale.z = FLAT;
+  for (let i = 0; i < 5; i++) {
+    const groove = add(new THREE.TorusGeometry(.566, .011, 8, 96), glow2, 0, -1.4 + i * .225, 0);
+    groove.rotation.x = Math.PI / 2;
+    groove.scale.y = FLAT;
+  }
+  // Col évasé puis tête de coupe
+  add(new THREE.CylinderGeometry(.7, .55, .55, 48), metal, 0, 1.15, 0).scale.z = FLAT;
+  add(new THREE.BoxGeometry(1.42, .3, .96), dark, 0, 1.56, 0);
+  add(new THREE.BoxGeometry(1.46, .09, .66), steel, 0, 1.75, .08);
+
+  // Deux rangées de dents : une fixe, une mobile qui vibre
+  const movingBlade = new THREE.Group();
+  clipper.add(movingBlade);
+  const toothA = new THREE.BoxGeometry(.03, .24, .3);
+  const toothB = new THREE.BoxGeometry(.026, .19, .28);
+  for (let i = 0; i < 26; i++) {
+    const x = -.69 + i * (1.38 / 25);
+    add(toothA, steel, x, 1.9, .24);
+    const t = new THREE.Mesh(toothB, steel);
+    t.position.set(x + .027, 1.88, -.08);
+    movingBlade.add(t);
+  }
+  add(new THREE.BoxGeometry(1.46, .07, .3), steel, 0, 1.78, -.08);
+
+  // Bouton marche/arrêt et témoins de charge sur la face avant
+  const frontZ = .55 * FLAT + .005;
+  add(new THREE.CapsuleGeometry(.06, .24, 8, 16), glow1, 0, .35, frontZ);
+  add(new THREE.TorusGeometry(.24, .014, 8, 64), glow1, 0, .35, frontZ - .03).scale.y = 1.25;
+  for (let i = 0; i < 3; i++) add(new THREE.SphereGeometry(.028, 12, 12), glow2, -.1 + i * .1, -.18, frontZ);
+
+  const N = 700, pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const r = 3 + Math.random() * 6, t = Math.random() * Math.PI * 2, p = Math.acos(2 * Math.random() - 1);
+    pos.set([r * Math.sin(p) * Math.cos(t), r * Math.sin(p) * Math.sin(t), r * Math.cos(p)], i * 3);
+  }
+  const dustGeo = new THREE.BufferGeometry();
+  dustGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const dustMat = new THREE.PointsMaterial({ size: 0.028, transparent: true, opacity: .8, depthWrite: false });
+  const dust = new THREE.Points(dustGeo, dustMat);
+  scene.add(dust);
+
+  const light1 = new THREE.PointLight(0xffffff, 90, 30);
+  const light2 = new THREE.PointLight(0xffffff, 90, 30);
+  light1.position.set(4, 3, 4);
+  light2.position.set(-4, -2, 3);
+  const key = new THREE.DirectionalLight(0xffffff, 2.6);
+  key.position.set(2, 3, 5);
+  scene.add(light1, light2, key);
+
+  const white = new THREE.Color('#ffffff');
+  onPalette = ([a1, a2]) => {
+    light1.color.set(a1); light2.color.set(a2);
+    glow1.color.set(a1); glow2.color.set(a2);
+    dustMat.color.set(a2);
+    metal.color.set(a1).lerp(white, .78);
+  };
+  onPalette(palettes[root.dataset.palette]);
+
+  function layout() {
+    const w = hero.clientWidth, h = hero.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    if (w >= 820) { group.position.set(Math.min(2.4, w / 560), 0, 0); group.scale.setScalar(1); }
+    else { group.position.set(0, 1.6, 0); group.scale.setScalar(.74); }
+  }
+  layout();
+  addEventListener('resize', layout);
+
+  const target = { x: 0, y: 0 };
+  addEventListener('pointermove', e => {
+    target.x = (e.clientX / innerWidth - .5) * 2;
+    target.y = (e.clientY / innerHeight - .5) * 2;
+  });
+
+  let visible = true;
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
+
+  const clock = new THREE.Clock();
+  function frame() {
+    requestAnimationFrame(frame);
+    if (!visible) return;
+    const t = clock.getElapsedTime();
+    if (!reduceMotion) {
+      clipper.rotation.y = t * .45;
+      movingBlade.position.x = Math.sin(t * 70) * .012;
+      dust.rotation.y = t * .02;
+    }
+    group.rotation.y += (target.x * .5 - group.rotation.y) * .05;
+    group.rotation.x += (target.y * .3 - group.rotation.x) * .05;
+    holder.position.y = Math.sin(t * .9) * .12 - scrollY * .0015;
+    renderer.render(scene, camera);
+  }
+  frame();
+}
+
+init3D().catch(() => root.classList.add('no-webgl'));
+</script>
+
+</body>
+</html>
