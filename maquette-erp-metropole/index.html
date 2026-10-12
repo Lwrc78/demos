@@ -226,12 +226,44 @@
 </style>
 <style>
   /* Palettes et composants propres à ERP Métropole — version sobre */
-  :root { --bg: #05090d; --a1: #38bdf8; --a2: #7dd3fc; }
-  [data-palette="cuivre"] { --bg: #0b0806; --a1: #f59e0b; --a2: #fde68a; }
-  [data-palette="acier"]  { --bg: #07090c; --a1: #94a3b8; --a2: #e2e8f0; }
-  [data-palette="menthe"] { --bg: #050b09; --a1: #34d399; --a2: #a7f3d0; }
+  /* --a1 : couleur de la marque, --a2 : couleur des boutons d'action */
+  :root { --bg: #0b1220; --a1: #4f8dff; --a2: #ff7a45; }
+  [data-palette="lagon"]  { --bg: #081417; --a1: #2dd4bf; --a2: #ff6b6b; }
+  [data-palette="indigo"] { --bg: #0e0d1f; --a1: #8b7dff; --a2: #ffb020; }
+  [data-palette="foret"]  { --bg: #0a1510; --a1: #3ecf8e; --a2: #f7b733; }
 
-  .glow-bg i { opacity: .12; }
+  /* Couleurs franches, sans halo ni effet néon */
+  .glow-bg { display: none; }
+  .btn { background: var(--a2); color: #fff; box-shadow: none; }
+  .btn:hover { box-shadow: none; filter: brightness(1.08); }
+  .btn.ghost { box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--a1); filter: none; }
+  .grad, .logo span { background: none; color: var(--a1); }
+  .eyebrow { color: var(--a1); }
+  .eyebrow::before { background: var(--a1); box-shadow: none; }
+  .stars { color: var(--a2); text-shadow: none; }
+  .glass::before { background: var(--stroke); }
+  .tag { color: var(--a2); }
+  .palettes button { background: linear-gradient(135deg, var(--c1) 50%, var(--c2) 50%); }
+
+  /* Accueil : la photo sert de décor, le canvas l'anime par-dessus */
+  /* Sur téléphone la photo occupe le haut de l'écran et le texte vient dessous, pour rester lisible */
+  .hero { overflow: hidden; }
+  .stage { position: absolute; inset: 0 0 auto 0; height: 52%; background: #0b1220 62% center / cover no-repeat; }
+  .no-webgl .hero::before { display: none; }
+  .no-webgl #scene { display: none; }
+  .shade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, transparent 45%, var(--bg)); }
+  .hint { position: absolute; z-index: 2; right: 20px; top: 20px; padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: rgba(0,0,0,.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); pointer-events: none; }
+  .hint::before { content: "Touchez l'image"; }
+  .band { background: color-mix(in srgb, var(--a1) 14%, var(--bg)); }
+  .shot { height: 170px; margin: -12px -12px 20px; border-radius: 14px; background: #1a2233 center / cover no-repeat; }
+  .tilt > .shot { transform: translateZ(46px); }
+  @media (min-width: 820px) {
+    .stage { height: 100%; }
+    .shade { background: linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 34%, transparent 72%); }
+    .hint { top: auto; bottom: 28px; right: 28px; }
+    .hint::before { content: "Passez la souris sur l'image"; }
+  }
   .demo-bar { background: #11161d; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--stroke); }
   .logo small { display: block; font: 500 11.5px Inter, sans-serif; color: var(--muted); letter-spacing: .04em; }
   .hero h1 { font-size: clamp(36px, 7.4vw, 68px); max-width: 15ch; }
@@ -322,10 +354,10 @@
       <a href="#contact">Contact</a>
     </nav>
     <div class="palettes" role="group" aria-label="Palette de couleurs">
-      <button data-p="azur" style="--c1:#38bdf8;--c2:#7dd3fc" aria-label="Palette Azur" aria-pressed="true"></button>
-      <button data-p="cuivre" style="--c1:#f59e0b;--c2:#fde68a" aria-label="Palette Cuivre" aria-pressed="false"></button>
-      <button data-p="acier" style="--c1:#94a3b8;--c2:#e2e8f0" aria-label="Palette Acier" aria-pressed="false"></button>
-      <button data-p="menthe" style="--c1:#34d399;--c2:#a7f3d0" aria-label="Palette Menthe" aria-pressed="false"></button>
+      <button data-p="azur" style="--c1:#4f8dff;--c2:#ff7a45" aria-label="Palette Azur" aria-pressed="true"></button>
+      <button data-p="lagon" style="--c1:#2dd4bf;--c2:#ff6b6b" aria-label="Palette Lagon" aria-pressed="false"></button>
+      <button data-p="indigo" style="--c1:#8b7dff;--c2:#ffb020" aria-label="Palette Indigo" aria-pressed="false"></button>
+      <button data-p="foret" style="--c1:#3ecf8e;--c2:#f7b733" aria-label="Palette Forêt" aria-pressed="false"></button>
     </div>
     <a class="btn small magnetic tel" href="tel:+33649626293">06 49 62 62 93</a>
   </div>
@@ -333,7 +365,11 @@
 
 <main>
   <div class="hero" id="hero">
-    <canvas id="scene" aria-hidden="true"></canvas>
+    <div class="stage" id="stage" style="background-image:url('https://images.unsplash.com/photo-1610278764397-388d11c35ddb?auto=format&fit=crop&w=1400&q=70')">
+      <canvas id="scene" aria-hidden="true"></canvas>
+      <div class="shade"></div>
+    </div>
+    <div class="hint" aria-hidden="true"></div>
     <div class="wrap">
       <div class="reveal"><span class="eyebrow">Plombier · Cenon</span><span class="open-badge">Disponible 24h/24</span></div>
       <h1 class="reveal" style="--d:.08s">Votre plombier à Cenon, <span class="grad">joignable à toute heure.</span></h1>
@@ -358,6 +394,7 @@
       </div>
       <div class="tilt-grid">
         <div class="tilt glass service reveal">
+          <div class="shot" role="img" aria-label="Plombier intervenant sous un évier" style="background-image:url('https://images.unsplash.com/photo-1676210134188-4c05dd172f89?auto=format&fit=crop&w=800&q=70')"></div>
           <span class="tag">Le jour même</span>
           <h3>Dépannage</h3>
           <ul>
@@ -369,6 +406,7 @@
           <a class="btn ghost small" href="tel:+33649626293">Appeler</a>
         </div>
         <div class="tilt glass service reveal" style="--d:.1s">
+          <div class="shot" role="img" aria-label="Radiateur et son robinet thermostatique" style="background-image:url('https://images.unsplash.com/photo-1587725950196-6ef36e3b474e?auto=format&fit=crop&w=800&q=70')"></div>
           <span class="tag">Avant l'hiver</span>
           <h3>Chaudière</h3>
           <ul>
@@ -380,6 +418,7 @@
           <a class="btn ghost small" href="#devis">Demander un devis</a>
         </div>
         <div class="tilt glass service reveal" style="--d:.2s">
+          <div class="shot" role="img" aria-label="Salle d'eau moderne avec douche" style="background-image:url('https://images.unsplash.com/photo-1696987007764-7f8b85dd3033?auto=format&fit=crop&w=800&q=70')"></div>
           <span class="tag">Projet</span>
           <h3>Salle d'eau</h3>
           <ul>
@@ -394,7 +433,7 @@
     </div>
   </section>
 
-  <section id="urgence">
+  <section id="urgence" class="band">
     <div class="wrap">
       <div class="section-head reveal">
         <div class="eyebrow">En cas d'urgence</div>
@@ -564,10 +603,10 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(pointer: fine)').matches;
 
 const palettes = {
-  azur:   ['#38bdf8', '#fb923c'],
-  cuivre: ['#f59e0b', '#fde68a'],
-  acier:  ['#94a3b8', '#38bdf8'],
-  menthe: ['#34d399', '#a7f3d0'],
+  azur:   ['#4f8dff', '#ff7a45'],
+  lagon:  ['#2dd4bf', '#ff6b6b'],
+  indigo: ['#8b7dff', '#ffb020'],
+  foret:  ['#3ecf8e', '#f7b733'],
 };
 let onPalette = () => {};
 
@@ -635,152 +674,169 @@ const io = new IntersectionObserver(entries => {
 }, { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-/* ---------- Scène 3D ---------- */
-async function init3D() {
+/* ---------- Décor interactif : une vraie photo, des ondes à sa surface, des reflets en profondeur ---------- */
+async function initScene() {
   const THREE = await import('three');
-  const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
-
   const canvas = document.getElementById('scene');
-  const hero = document.getElementById('hero');
+  const stage = document.getElementById('stage');
   // Sur téléphone : rendu allégé pour rester fluide et ménager la batterie
   const lite = matchMedia('(max-width: 819px), (pointer: coarse)').matches;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !lite, alpha: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.5 : 2));
   canvas.addEventListener('webglcontextlost', () => root.classList.add('no-webgl'));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
   const scene = new THREE.Scene();
-  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
-  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-  camera.position.z = 7.5;
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 50);
+  camera.position.z = 6;
+  const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(20)) * 6;
 
-  const group = new THREE.Group();
-  scene.add(group);
+  const photoUrl = `https://images.unsplash.com/photo-1610278764397-388d11c35ddb?auto=format&fit=crop&w=${lite ? 1000 : 1800}&q=72`;
+  const tex = await new THREE.TextureLoader().setCrossOrigin('anonymous').loadAsync(photoUrl);
 
-  const metal = new THREE.MeshPhysicalMaterial({
-    metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.1,
-    iridescence: 1, iridescenceIOR: 1.6, envMapIntensity: 1.6,
-  });
-  /* Mitigeur chromé modélisé en code (aucun fichier 3D à charger) */
-  const dark = new THREE.MeshStandardMaterial({ color: 0x10141b, metalness: .85, roughness: .22 });
-  const glow1 = new THREE.MeshBasicMaterial();
-  const glow2 = new THREE.MeshBasicMaterial();
-
-  const holder = new THREE.Group(); // inclinaison fixe
-  const tap = new THREE.Group(); // pivote doucement
-  holder.rotation.set(.2, 0, 0);
-  holder.scale.setScalar(.86);
-  tap.position.set(-.45, .6, 0); // recentre l'ensemble mitigeur + plan de travail
-  holder.add(tap);
-  group.add(holder);
-
-  const add = (geo, mat, x = 0, y = 0, z = 0) => {
-    const m = new THREE.Mesh(geo, mat);
-    m.position.set(x, y, z);
-    tap.add(m);
-    return m;
+  const MAX = 8;
+  const uniforms = {
+    uTex: { value: tex }, uTime: { value: 0 }, uRatio: { value: 1 },
+    uScale: { value: new THREE.Vector2(1, 1) }, uCenter: { value: new THREE.Vector2(.5, .5) }, uShift: { value: new THREE.Vector2() },
+    uTint: { value: new THREE.Color() },
+    uRipples: { value: Array.from({ length: MAX }, () => new THREE.Vector3(0, 0, -10)) },
   };
-  const BASE = -1.25; // hauteur du plan de travail
+  const photo = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader: `
+      varying vec2 vUv;
+      void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
+    fragmentShader: `
+      precision highp float;
+      uniform sampler2D uTex;
+      uniform float uTime, uRatio;
+      uniform vec2 uScale, uCenter, uShift;
+      uniform vec3 uTint;
+      uniform vec3 uRipples[${MAX}];
+      varying vec2 vUv;
+      void main() {
+        vec2 uv = (vUv - .5) * uScale + uCenter + uShift;
+        float glint = 0.;
+        // Chaque onde est un anneau qui s'élargit et s'éteint en trois secondes
+        for (int i = 0; i < ${MAX}; i++) {
+          float t = uTime - uRipples[i].z;
+          if (t > 0. && t < 3.) {
+            vec2 d = (vUv - uRipples[i].xy) * vec2(uRatio, 1.);
+            float dist = length(d);
+            float ring = sin(46. * dist - t * 10.) * exp(-9. * abs(dist - t * .28)) * (1. - t / 3.);
+            uv += normalize(d + 1e-5) * ring * .014;
+            glint += ring;
+          }
+        }
+        vec3 col = texture2D(uTex, uv).rgb;
+        float grey = dot(col, vec3(.299, .587, .114));
+        col = mix(col, grey * uTint * 1.6, .2); // légère teinte aux couleurs du site
+        gl_FragColor = vec4(col + glint * .07, 1.);
+      }`,
+  }));
+  scene.add(photo);
 
-  // Plan de travail sombre et son liseré lumineux
-  add(new THREE.CylinderGeometry(1.75, 1.75, .08, 96), dark, .45, BASE - .04, 0);
-  add(new THREE.TorusGeometry(1.75, .012, 8, 160), glow1, .45, BASE, 0).rotation.x = Math.PI / 2;
-
-  // Corps du mitigeur
-  add(new THREE.CylinderGeometry(.3, .34, .1, 64), metal, 0, BASE + .05, 0);
-  add(new THREE.CylinderGeometry(.19, .21, 1.05, 64), metal, 0, BASE + .62, 0);
-  add(new THREE.TorusGeometry(.2, .014, 8, 96), glow1, 0, BASE + .16, 0).rotation.x = Math.PI / 2;
-
-  // Bec en col de cygne
-  const neck = new THREE.CatmullRomCurve3([[0, 1.1], [0, 1.75], [.22, 2.2], [.7, 2.38], [1.12, 2.2], [1.3, 1.82]].map(([x, y]) => new THREE.Vector3(x, BASE + y, 0)));
-  add(new THREE.TubeGeometry(neck, 96, .105, 32, false), metal);
-  add(new THREE.SphereGeometry(.19, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2), metal, 0, BASE + 1.14, 0);
-  add(new THREE.CylinderGeometry(.125, .125, .16, 48), metal, 1.3, BASE + 1.78, 0);
-  add(new THREE.TorusGeometry(.125, .012, 8, 64), glow2, 1.3, BASE + 1.7, 0).rotation.x = Math.PI / 2;
-
-  // Levier de commande sur le côté
-  add(new THREE.CylinderGeometry(.085, .085, .24, 32), metal, 0, BASE + .72, .26).rotation.x = Math.PI / 2;
-  const leverArm = add(new THREE.CapsuleGeometry(.04, .5, 8, 16), metal, 0, BASE + .92, .46);
-  leverArm.rotation.x = .55;
-
-  // La goutte qui tombe, et l'onde à l'impact
-  const dropTop = BASE + 1.62;
-  const drop = add(new THREE.SphereGeometry(.065, 24, 24), glow2, 1.3, dropTop, 0);
-  const ripple = add(new THREE.TorusGeometry(.3, .01, 8, 64), new THREE.MeshBasicMaterial({ transparent: true }), 1.3, BASE + .012, 0);
-  ripple.rotation.x = Math.PI / 2;
-
-  const N = lite ? 280 : 700, pos = new Float32Array(N * 3);
+  // Reflets flous à différentes profondeurs : ils glissent devant la photo quand on bouge
+  const dot = document.createElement('canvas');
+  dot.width = dot.height = 64;
+  const g = dot.getContext('2d'), grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grad.addColorStop(0, 'rgba(255,255,255,.9)');
+  grad.addColorStop(.5, 'rgba(255,255,255,.25)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 64, 64);
+  const N = lite ? 24 : 56, pos = new Float32Array(N * 3), speed = new Float32Array(N);
   for (let i = 0; i < N; i++) {
-    const r = 3 + Math.random() * 6, t = Math.random() * Math.PI * 2, p = Math.acos(2 * Math.random() - 1);
-    pos.set([r * Math.sin(p) * Math.cos(t), r * Math.sin(p) * Math.sin(t), r * Math.cos(p)], i * 3);
+    pos.set([(Math.random() - .5) * 9, (Math.random() - .5) * 5, .6 + Math.random() * 3], i * 3);
+    speed[i] = .05 + Math.random() * .12;
   }
-  const dustGeo = new THREE.BufferGeometry();
-  dustGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const dustMat = new THREE.PointsMaterial({ size: 0.028, transparent: true, opacity: .8, depthWrite: false });
-  const dust = new THREE.Points(dustGeo, dustMat);
-  scene.add(dust);
-
-  const light1 = new THREE.PointLight(0xffffff, 90, 30);
-  const light2 = new THREE.PointLight(0xffffff, 90, 30);
-  light1.position.set(4, 3, 4);
-  light2.position.set(-4, -2, 3);
-  const key = new THREE.DirectionalLight(0xffffff, 2.6);
-  key.position.set(2, 3, 5);
-  scene.add(light1, light2, key);
+  const bokehGeo = new THREE.BufferGeometry();
+  bokehGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const bokehMat = new THREE.PointsMaterial({ map: new THREE.CanvasTexture(dot), size: .34, transparent: true, opacity: .5, depthWrite: false, blending: THREE.AdditiveBlending });
+  scene.add(new THREE.Points(bokehGeo, bokehMat));
 
   const white = new THREE.Color('#ffffff');
-  onPalette = ([a1, a2]) => {
-    light1.color.set(a1); light2.color.set(a2);
-    glow1.color.set(a1); glow2.color.set(a2);
-    dustMat.color.set(a2);
-    metal.color.set(a1).lerp(white, .86);
+  onPalette = ([a1]) => {
+    uniforms.uTint.value.set(a1);
+    bokehMat.color.set(a1).lerp(white, .45);
   };
   onPalette(palettes[root.dataset.palette]);
 
+  const OVERSCAN = 1.12; // la photo déborde un peu pour pouvoir bouger sans montrer ses bords
   function layout() {
-    const w = hero.clientWidth, h = hero.clientHeight;
+    const w = stage.clientWidth, h = stage.clientHeight, aspect = w / h;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    camera.aspect = aspect;
     camera.updateProjectionMatrix();
-    if (w >= 820) { group.position.set(Math.min(2.4, w / 560), 0, 0); group.scale.setScalar(1); }
-    else { group.position.set(0, 1.6, 0); group.scale.setScalar(.74); }
+    photo.scale.set(viewHeight * aspect * OVERSCAN, viewHeight * OVERSCAN, 1);
+    const img = tex.image.width / tex.image.height;
+    // Recadrage façon « cover », avec une petite marge pour le glissement
+    uniforms.uScale.value.set(aspect > img ? .94 : .94 * aspect / img, aspect > img ? .94 * img / aspect : .94);
+    // On cadre sur le robinet (un peu à droite du centre) sans jamais sortir de la photo
+    const half = uniforms.uScale.value.x / 2 + .02;
+    uniforms.uCenter.value.set(Math.min(1 - half, Math.max(half, .6)), .5);
+    uniforms.uRatio.value = aspect;
   }
   layout();
   addEventListener('resize', layout);
 
+  let next = 0;
+  const ripple = (u, v) => {
+    uniforms.uRipples.value[next].set(u, v, uniforms.uTime.value);
+    next = (next + 1) % MAX;
+  };
   const target = { x: 0, y: 0 };
-  addEventListener('pointermove', e => {
-    target.x = (e.clientX / innerWidth - .5) * 2;
-    target.y = (e.clientY / innerHeight - .5) * 2;
-  });
+  let lastRipple = 0;
+  const onPointer = (e, force) => {
+    const r = stage.getBoundingClientRect();
+    const u = (e.clientX - r.left) / r.width, v = 1 - (e.clientY - r.top) / r.height;
+    if (u < 0 || u > 1 || v < 0 || v > 1) return;
+    target.x = (u - .5) * 2;
+    target.y = (v - .5) * 2;
+    const now = performance.now();
+    if (force || now - lastRipple > 160) {
+      lastRipple = now;
+      ripple((u - .5) / OVERSCAN + .5, (v - .5) / OVERSCAN + .5);
+    }
+  };
+  addEventListener('pointermove', e => onPointer(e, false));
+  addEventListener('pointerdown', e => onPointer(e, true));
 
   let visible = true;
-  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(stage);
 
   const clock = new THREE.Clock();
+  const eased = { x: 0, y: 0 };
+  let lastDrip = 0;
   function frame() {
     requestAnimationFrame(frame);
     if (!visible) return;
     const t = clock.getElapsedTime();
+    uniforms.uTime.value = t;
     if (!reduceMotion) {
-      tap.rotation.y = -.35 + Math.sin(t * .45) * .55;
-      const fall = (t * .9) % 1;
-      drop.position.y = dropTop - fall * fall * 1.55;
-      drop.scale.setScalar(fall < .08 ? fall / .08 : 1);
-      ripple.scale.setScalar(.3 + fall * 1.4);
-      ripple.material.opacity = (1 - fall) * .8;
-      ripple.material.color.copy(glow2.color);
-      dust.rotation.y = t * .02;
+      // Une goutte tombe toute seule de temps en temps, même sans toucher l'image
+      if (t - lastDrip > 2.6) { lastDrip = t; ripple(.5 + Math.random() * .38, .25 + Math.random() * .4); }
+      const p = bokehGeo.attributes.position;
+      for (let i = 0; i < N; i++) {
+        let y = p.getY(i) + speed[i] * .016;
+        if (y > 2.7) y = -2.7;
+        p.setY(i, y);
+      }
+      p.needsUpdate = true;
     }
-    group.rotation.y += (target.x * .5 - group.rotation.y) * .05;
-    group.rotation.x += (target.y * .3 - group.rotation.x) * .05;
-    holder.position.y = .1 + Math.sin(t * .9) * .08 - scrollY * .0015;
+    // Sans souris (téléphone), un léger balancement garde la profondeur visible
+    const sway = lite && !reduceMotion ? Math.sin(t * .5) * .45 : 0;
+    eased.x += (target.x + sway - eased.x) * .05;
+    eased.y += (target.y - eased.y) * .05;
+    uniforms.uShift.value.set(eased.x * .012, eased.y * .008);
+    camera.position.x = eased.x * .32;
+    camera.position.y = eased.y * .18;
+    camera.lookAt(0, 0, 0);
     renderer.render(scene, camera);
   }
   frame();
 }
 
-init3D().catch(() => root.classList.add('no-webgl'));
+initScene().catch(() => root.classList.add('no-webgl'));
 </script>
 
 </body>
