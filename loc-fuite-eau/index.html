@@ -436,6 +436,10 @@
   .form select option { background: #0A2556; }
   .form textarea { min-height: 112px; resize: vertical; }
   .form .note { grid-column: 1 / -1; font-size: 12.5px; color: var(--dim); margin: 0; }
+  .form .hp { display: none; }
+  .form button[disabled] { opacity: .7; cursor: progress; }
+  .form-err { grid-column: 1 / -1; margin: 0; padding: 12px 14px; border-radius: 12px; font-size: 14px; color: var(--hot-2); background: rgba(255,122,69,.1); border: 1px solid rgba(255,122,69,.35); }
+  .form-err a { color: var(--white); font-weight: 600; }
   .form.shake { animation: shake .4s; }
   @keyframes shake { 20%, 60% { translate: -6px 0; } 40%, 80% { translate: 6px 0; } }
   .sent { grid-column: 1 / -1; display: none; text-align: center; padding: 26px 8px; }
@@ -455,6 +459,20 @@
   .ft .demo { color: var(--dim); font-size: 12.5px; margin-top: 26px; grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 20px; }
 
   /* Barre d'action sur téléphone */
+  /* Tarifs : une carte par prestation, le prix en bas de carte */
+  .price-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .price-card { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 20px; background: linear-gradient(180deg, var(--panel-2), var(--panel)); border: 1px solid var(--line); transition: border-color .3s, transform .4s var(--ease), box-shadow .4s; }
+  .price-card:hover { border-color: var(--blue); transform: translateY(-4px); box-shadow: 0 18px 40px -24px rgba(45,124,255,.6); }
+  .price-card .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: rgba(45,124,255,.16); color: var(--blue-2); }
+  .price-card h3 { font-size: 18px; line-height: 1.25; }
+  .price-card p { color: var(--muted); font-size: 14.5px; margin: 0; flex: 1; }
+  .price-card .amount { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--line); display: grid; gap: 2px; }
+  .price-card .amount small { color: var(--dim); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .price-card .amount strong { font: 800 28px/1.1 var(--f-display); color: var(--white); }
+  .price-card .amount strong.tbd { font-size: 17px; font-weight: 700; color: var(--blue-3); }
+  .price-foot { margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; }
+  .price-foot p { color: var(--dim); font-size: 13.5px; margin: 0; max-width: 60ch; }
+
   .mbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display: none; gap: 10px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(8,32,74,.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid var(--line); }
   .mbar .btn { flex: 1; padding: 15px 12px; }
 
@@ -469,6 +487,7 @@
     .meth { gap: 28px; }
     .screen-wrap { max-width: 560px; }
     .head-split { grid-template-columns: 1fr; }
+    .price-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 760px) {
     section { padding-block: 64px; }
@@ -493,7 +512,8 @@
     .row .ic { width: 44px; height: 44px; border-radius: 13px; }
     .row p { grid-column: 2 / 4; grid-row: 2; font-size: 14.5px; margin-top: 6px; }
     .row .go { width: 36px; height: 36px; grid-column: 3; grid-row: 1; }
-    .ch-grid, .meter-grid { grid-template-columns: 1fr; }
+    .ch-grid, .meter-grid, .price-grid { grid-template-columns: 1fr; }
+    .price-card { padding: 20px; }
     .rev-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin-inline: -16px; padding-inline: 16px; padding-bottom: 6px; scrollbar-width: none; }
     .rev-grid::-webkit-scrollbar { display: none; }
     .rev { flex: 0 0 84%; scroll-snap-align: center; }
@@ -566,6 +586,7 @@
       <a href="#detecteur">Le détecteur</a>
       <a href="#methode">Méthode</a>
       <a href="#services">Services</a>
+      <a href="#tarifs">Tarifs</a>
       <a href="#test">Le test</a>
       <a href="#avis">Avis</a>
       <a href="#contact">Contact</a>
@@ -761,6 +782,46 @@
     <div class="svc-float" aria-hidden="true"><img alt=""></div>
   </section>
 
+  <!-- Tarifs : prix à compléter avec LOC FUITE EAU (remplacer « Prix à venir » par <small>À partir de</small><strong>… €</strong>) -->
+  <section id="tarifs">
+    <div class="wrap">
+      <div class="head-split">
+        <div><span class="eyebrow">Tarifs</span><h2>Des prix clairs, avant de venir.</h2></div>
+        <p class="lead">Le prix dépend du type de recherche et de l'accès à vos canalisations. Demandez le vôtre au téléphone.</p>
+      </div>
+      <div class="price-grid">
+        <article class="price-card">
+          <span class="ic"><svg class="i"><use href="#ic-shield"/></svg></span>
+          <h3>Recherche de fuite sans destruction</h3>
+          <p>Diagnostic, détection et marquage du point de fuite au centimètre.</p>
+          <div class="amount"><strong class="tbd">Prix à venir</strong></div>
+        </article>
+        <article class="price-card">
+          <span class="ic"><svg class="i"><use href="#ic-pipe"/></svg></span>
+          <h3>Canalisations enterrées</h3>
+          <p>Tracé de vos canalisations extérieures et localisation de la fuite.</p>
+          <div class="amount"><strong class="tbd">Prix à venir</strong></div>
+        </article>
+        <article class="price-card">
+          <span class="ic"><svg class="i"><use href="#ic-cam"/></svg></span>
+          <h3>Inspection par caméra</h3>
+          <p>Film de l'intérieur des canalisations, sans rien démonter.</p>
+          <div class="amount"><strong class="tbd">Prix à venir</strong></div>
+        </article>
+        <article class="price-card">
+          <span class="ic"><svg class="i"><use href="#ic-doc"/></svg></span>
+          <h3>Rapport pour l'assurance</h3>
+          <p>Compte rendu de l'intervention, à transmettre à votre assureur.</p>
+          <div class="amount"><strong class="tbd">Prix à venir</strong></div>
+        </article>
+      </div>
+      <div class="price-foot">
+        <p>Tarifs en cours de validation avec LOC FUITE EAU.</p>
+        <a class="btn btn-primary" href="tel:+33670150904"><svg class="i i-phone"><use href="#ic-phone"/></svg>Demander un prix · 06 70 15 09 04</a>
+      </div>
+    </div>
+  </section>
+
   <!-- Outil : le test de fuite -->
   <section id="test" class="sec-ice">
     <div class="wrap">
@@ -931,12 +992,14 @@
           </select>
         </label>
         <label class="full" for="f-msg">Message<textarea id="f-msg" name="msg" placeholder="Depuis quand, où, ce que vous avez remarqué…"></textarea></label>
-        <button class="btn btn-primary full" type="submit">Envoyer ma demande<svg class="i i-arrow"><use href="#ic-arrow"/></svg></button>
-        <p class="note">Nom et téléphone suffisent pour être rappelé.</p>
+        <input class="hp" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn btn-primary full" type="submit"><span class="lbl">Envoyer ma demande</span><svg class="i i-arrow"><use href="#ic-arrow"/></svg></button>
+        <p class="form-err" id="formErr" role="alert" hidden>L'envoi n'a pas abouti. Appelez le <a href="tel:+33670150904">06 70 15 09 04</a> ou <a id="smsLink" href="sms:+33670150904">envoyez votre demande par SMS</a>.</p>
+        <p class="note">Nom et téléphone suffisent pour être rappelé. Vos informations servent uniquement à traiter votre demande.</p>
         <div class="sent">
           <div class="ok-ic"><svg class="i" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></div>
-          <h3>Demande prête</h3>
-          <p>Sur le site final, elle arrive directement dans la boîte mail de LOC FUITE EAU. Pour une urgence : 06 70 15 09 04.</p>
+          <h3>Demande envoyée</h3>
+          <p>Elle est bien arrivée chez LOC FUITE EAU, qui vous recontacte. Pour une urgence : 06 70 15 09 04.</p>
           <button class="btn btn-ghost sm" id="again" type="button">Nouvelle demande</button>
         </div>
       </form>
@@ -1430,10 +1493,15 @@
     try { navigator.clipboard.writeText('06 70 15 09 04').then(() => done('Numéro copié ✓'), fallback); } catch (e) { fallback(); }
   });
 
-  // Formulaire : vérification puis confirmation dans la page
+  // Formulaire : la demande part par e-mail chez LOC FUITE EAU (service FormSubmit) ;
+  // si l'envoi échoue, on propose d'appeler ou d'envoyer la même demande par SMS.
   const form = $('#form');
-  form.addEventListener('submit', e => {
+  const sendBtn = $('button[type=submit]', form), sendLbl = $('.lbl', sendBtn);
+  const formErr = $('#formErr');
+  const MAIL = 'locfuite.eau@gmail.com';
+  form.addEventListener('submit', async e => {
     e.preventDefault();
+    if (sendBtn.disabled) return;
     const bad = ['#f-nom', '#f-tel'].map(s => $(s, form)).filter(el => !el.value.trim());
     if (bad.length) {
       form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
@@ -1441,10 +1509,44 @@
       vib(20);
       return;
     }
-    form.classList.add('done');
-    vib([10, 40, 10]);
+    const v = s => $(s, form).value.trim();
+    const ville = v('#f-ville');
+    const data = {
+      'Nom': v('#f-nom'),
+      'Téléphone': v('#f-tel'),
+      'Commune': ville || 'Non précisée',
+      'Problème': v('#f-type'),
+      'Message': v('#f-msg') || '—',
+      _subject: 'Nouvelle demande du site : ' + v('#f-type') + (ville ? ' à ' + ville : ''),
+      _template: 'table',
+      _honey: v('[name=_honey]')
+    };
+    formErr.hidden = true;
+    sendBtn.disabled = true; sendLbl.textContent = 'Envoi en cours…';
+    try {
+      const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 15000);
+      const r = await fetch('https://formsubmit.co/ajax/' + MAIL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data),
+        signal: ctrl.signal
+      });
+      clearTimeout(timer);
+      const res = await r.json().catch(() => ({}));
+      if (!r.ok || String(res.success) !== 'true') throw new Error(res.message || 'HTTP ' + r.status);
+      form.classList.add('done');
+      vib([10, 40, 10]);
+    } catch (x) {
+      const sms = 'Demande depuis le site LOC FUITE EAU\nNom : ' + data['Nom'] + '\nTél : ' + data['Téléphone'] +
+        '\nCommune : ' + data['Commune'] + '\nProblème : ' + data['Problème'] + '\n' + data['Message'];
+      $('#smsLink').href = 'sms:+33670150904?&body=' + encodeURIComponent(sms);
+      formErr.hidden = false;
+      vib(20);
+    } finally {
+      sendBtn.disabled = false; sendLbl.textContent = 'Envoyer ma demande';
+    }
   });
-  $('#again').addEventListener('click', () => { form.reset(); form.classList.remove('done'); });
+  $('#again').addEventListener('click', () => { form.reset(); form.classList.remove('done'); formErr.hidden = true; });
 })();
 </script>
 </body>
